@@ -37,7 +37,7 @@ layer:insertSprite(bar_under)
 layer:insertSprite(bar)
 
 
-local romNames = cm.serialize.load("romnames.lua") or {}
+local romNames = cm.serialize.load("frontend/romnames.lua") or {}
 
 local database = cm.serialize.load("game_database.lua") or {games={},genres={},developers={},years={},platforms={}}
 local cfg = cm.serialize.load("emuConf.lua") or error("No emulation configuration found")
