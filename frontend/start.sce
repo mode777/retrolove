@@ -2,10 +2,11 @@ local cm = require(ENGINE_PATH)
 local scene = {}
 function scene:onLoad()
     love.mouse.setVisible(false)
-    cm.thread.waitThread(cm.scene.new("frontend/animation.sce"):run())
+    cm.thread.waitThread(cm.runScene("frontend/animation.sce"))
     if not love.filesystem.exists("buttons.lua") then cm.thread.waitThread(cm.scene.new("frontend/buttonMapping.sce"):run())
     else cm.input.setMappingTable(cm.serialize.load("buttons.lua"))
     end
+    print("finish")
     --initialize your scene here
 end
 

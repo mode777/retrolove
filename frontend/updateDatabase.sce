@@ -63,7 +63,7 @@ end
 
 local function loadScreen(func)
     local layer = cm.layer.new()
-    local sprite = cm.sprite.new(sw/2,sh/2,cm.sourceImage.new("assets/loading.png"))
+    local sprite = cm.sprite.new(sw/2,sh/2,cm.sourceImage.new("frontend/loading.png"))
     sprite:setTint(unpack(color2))
     sprite:center()
     layer:insertSprite(sprite)

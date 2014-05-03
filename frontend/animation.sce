@@ -3,6 +3,7 @@ local scene = {}
 local cfg = require("frontend/config")
 
 function scene:onLoad()
+    print("test")
     local color_bg, color1, color2 = cfg.bgColor, cfg.color1, cfg.color2
     love.graphics.setBackgroundColor(unpack(color_bg))
     local sw,sh = love.window.getDimensions()

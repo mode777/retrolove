@@ -15,8 +15,8 @@ local sFont = cfg.font[2]
 local sFont2 = cfg.font[3]
 local sFont3 = cfg.font[1]
 local sFont4 = cfg.font[4]
-local sSidebar = cm.sourceImage.new("assets/sidebar.png")
-local sArrow = cm.sourceImage.new("assets/arrow.png")
+local sSidebar = cm.sourceImage.new("frontend/sidebar.png")
+local sArrow = cm.sourceImage.new("frontend/arrow.png")
 local id = love.image.newImageData(1,2)
 id:setPixel(0,0,255,255,255,0)
 id:setPixel(0,1,255,255,255,255)
