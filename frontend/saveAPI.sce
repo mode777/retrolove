@@ -60,7 +60,7 @@ local function markdown(filename)
 
     function i:getString()
         local str = table.concat(buffer)
-        str = str:gsub("%%(.-)%%",function(c) return string.format("[´%s´](cine.%s)",c,c) end)
+        str = str:gsub("%%(.-)%%",function(c) return string.format("[`%s`](cine.%s)",c,c) end)
         return str
     end
 
