@@ -311,9 +311,9 @@ end
 
 
 local function buildSelector()
-    database = cine.serialize.load("game_database.lua")
-    print("Games in Database:"..#database.games)
-    myData = database.games
+    database = cine.serialize.load("game_database.lua") or {}
+    --print("Games in Database:"..#database.games)
+    myData = database.games or {}
     myData = cine.data.filter(myData,filter)
     table.sort(myData,function(a,b) return tostring(a.name)<tostring(b.name) end)
     selector = menu.new(sFont)
