@@ -54,8 +54,7 @@ local function markdown(filename)
     end
 
     function i:newParagraph(str)
-
-
+        add(str.."\r\n")
     end
 
     function i:getString()
@@ -115,6 +114,9 @@ local function createDocumentation(doclet)
             if doc.new then
                 local content = doc.new
                 document:newSection("Constructor")
+                if doc.new.INHERIT then
+                    document:newParagraph("This object inherits from %"..doc.new.INHERIT.."%. All of it's parents methods can be used unless definied otherweise on this page.")
+                end
                 local desc, para, ret = content[1], content[2] or {}, content[3] or {}
                 local usage = formatUsage("%scine."..name..".new(%s)",para,ret)
                 document:newBlock("cine."..name..".new",desc,usage,para,ret)
