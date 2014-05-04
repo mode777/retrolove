@@ -52,8 +52,16 @@ local function markdown(filename)
         add("\r\n---\r\n")
         table.insert(sections[#sections].blocks,name)
     end
+
+    function i:newParagraph(str)
+
+
+    end
+
     function i:getString()
-        return table.concat(buffer)
+        local str = table.concat(buffer)
+        str = str:gsub("%%(.-)%%",function(c) return string.format("[´%s´](cine.%s)",c,c) end)
+        return str
     end
 
     function i:generateTOC()
@@ -75,7 +83,8 @@ local function markdown(filename)
     end
 
     function i:save()
-        cine.serialize.saveString(table.concat(buffer), filename..".md")
+        local str= self:getString()
+        cine.serialize.saveString(str, filename..".md")
     end
 
     return i
