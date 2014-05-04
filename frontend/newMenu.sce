@@ -1,7 +1,6 @@
-local cm = require(ENGINE_PATH)
 local OS = require("frontend/OS")
 local cfg = require("frontend/config")
-local bLeft, bRight, bStart = cm.input.getVirtualInput("Left"),cm.input.getVirtualInput("Right"),cm.input.getVirtualInput("Start")
+local bLeft, bRight, bStart = cine.input.getVirtualInput("Left"),cine.input.getVirtualInput("Right"),cine.input.getVirtualInput("Start")
 local scene = {}
 
 local sw,sh = love.window.getDimensions()
@@ -15,12 +14,12 @@ local sFont = cfg.font[2]
 local sFont2 = cfg.font[3]
 local sFont3 = cfg.font[1]
 local sFont4 = cfg.font[4]
-local sSidebar = cm.sourceImage.new("frontend/sidebar.png")
-local sArrow = cm.sourceImage.new("frontend/arrow.png")
+local sSidebar = cine.sourceImage.new("frontend/sidebar.png")
+local sArrow = cine.sourceImage.new("frontend/arrow.png")
 local id = love.image.newImageData(1,2)
 id:setPixel(0,0,255,255,255,0)
 id:setPixel(0,1,255,255,255,255)
-local gSource = cm.sourceImage.new(id)
+local gSource = cine.sourceImage.new(id)
 
 local selection = require("frontend/selectMenu")
 local menu = require("frontend/menu")
@@ -30,38 +29,38 @@ local selector
 --Ia. Data
 local filter =
 {
-    --platform={cm.data.equals,"Arcade"},
-    --genres={cm.data.equals,"Alex" }
+    --platform={cine.data.equals,"Arcade"},
+    --genres={cine.data.equals,"Alex" }
 }
-local database = cm.serialize.load("game_database.lua")
+local database = cine.serialize.load("game_database.lua")
 
 
 -- III.Sidebars
-local sidebarLayer = cm.layer.new()
+local sidebarLayer = cine.layer.new()
 sidebarLayer:setZIndex(2)
-local sidebarTextLayer = cm.layer.new()
+local sidebarTextLayer = cine.layer.new()
 sidebarTextLayer:setZIndex(3)
 
-local gradient_l = cm.sprite.new(-0.38*sh,sh*0.38,gSource)
+local gradient_l = cine.sprite.new(-0.38*sh,sh*0.38,gSource)
 gradient_l:center("left","bottom")
 gradient_l:setSca(sh*0.62,sh*0.25)
 gradient_l:setRot(math.rad(90))
 sidebarLayer:insertSprite(gradient_l)
 
-local sidebar_l = cm.sprite.new(sh*0.17,sh*0.52,sSidebar)
+local sidebar_l = cine.sprite.new(sh*0.17,sh*0.52,sSidebar)
 sidebar_l:setTint(unpack(color1))
 sidebar_l:setSca(sh*0.35/sSidebar:getImage():getHeight())
 sidebar_l:center("right","top")
 sidebar_l:setTweenStyle("easeout")
 sidebarLayer:insertSprite(sidebar_l)
 
-local optionsText = cm.sprite.new(sh*0.13,sh*0.69,sFont, " Options")
+local optionsText = cine.sprite.new(sh*0.13,sh*0.69,sFont, " Options")
 optionsText:setTint(unpack(color_bg))
 optionsText:setRot(math.rad(90))
 optionsText:center()
 sidebarLayer:insertSprite(optionsText)
 
-local optionsArrow = cm.sprite.new(sh*0.07, sh*0.69,sArrow)
+local optionsArrow = cine.sprite.new(sh*0.07, sh*0.69,sArrow)
 optionsArrow:center()
 optionsArrow:setTint(unpack(color_bg))
 optionsArrow:setSca(sh*0.10/sArrow:getImage():getHeight())
@@ -77,7 +76,7 @@ optionsMenu:addItem("Show all",function()
     reset=true
 end)
 optionsMenu:addItem("Show favourites",function()
-    filter = { favourite={cm.data.isTrue} }
+    filter = { favourite={cine.data.isTrue} }
     selector:setIndex(1)
     reset=true
 end)
@@ -88,7 +87,7 @@ optionsMenu:addItem("Show platform",function()
     end
     local choice = selection("Select platform",platforms)
     if choice ~= 0 then
-        filter = { platform={cm.data.equals,platforms[choice]} }
+        filter = { platform={cine.data.equals,platforms[choice]} }
         selector:setIndex(1)
         reset=true
     end
@@ -101,7 +100,7 @@ optionsMenu:addItem("Show genre",function()
     for i=1, math.min(17,#genres) do sortedGenres[i] = genres[i].name end
     local choice = selection("Select genre",sortedGenres)
     if choice ~= 0 then
-        filter = { genres={cm.data.equals,sortedGenres[choice]} }
+        filter = { genres={cine.data.equals,sortedGenres[choice]} }
         selector:setIndex(1)
         reset=true
     end
@@ -114,7 +113,7 @@ optionsMenu:addItem("Show developer",function()
     for i=1, math.min(17,#developers) do sortedDevelopers[i] = developers[i].name end
     local choice = selection("Select developer",sortedDevelopers)
     if choice ~= 0 then
-        filter = { developers={cm.data.equals,sortedDevelopers[choice]} }
+        filter = { developers={cine.data.equals,sortedDevelopers[choice]} }
         selector:setIndex(1)
         reset=true
     end
@@ -123,26 +122,26 @@ optionsMenu:setPos(-sh*0.45,sh*0.6)
 local c = optionsMenu:getCam()
 sidebar_l:setAttributeLink(c,"pos_x",nil,function(a,b) return -a+b end)
 
-local sidebar_r = cm.sprite.new(sw-sh*0.17,sh*0.52,sSidebar)
+local sidebar_r = cine.sprite.new(sw-sh*0.17,sh*0.52,sSidebar)
 sidebar_r:setTint(unpack(color2))
 sidebar_r:center("right","bottom")
 sidebar_r:setTweenStyle("easeout")
 sidebar_r:setSca(-sh*0.35/sSidebar:getImage():getHeight())
 sidebarLayer:insertSprite(sidebar_r)
 
-local infoText = cm.sprite.new(sw-sh*0.13,sh*0.69,sFont," Info")
+local infoText = cine.sprite.new(sw-sh*0.13,sh*0.69,sFont," Info")
 infoText:setTint(unpack(color_bg))
 infoText:setRot(math.rad(90))
 infoText:center()
 sidebarLayer:insertSprite(infoText)
 
-local infoArrow = cm.sprite.new(sw-sh*0.07, sh*0.69,sArrow)
+local infoArrow = cine.sprite.new(sw-sh*0.07, sh*0.69,sArrow)
 infoArrow:center()
 infoArrow:setTint(unpack(color_bg))
 infoArrow:setSca(-sh*0.10/sArrow:getImage():getHeight())
 sidebarLayer:insertSprite(infoArrow)
 
-local textDescription = cm.sprite.new(sw,sh*0.52+sFont3:getLineHeight(),sFont3,"No games available")
+local textDescription = cine.sprite.new(sw,sh*0.52+sFont3:getLineHeight(),sFont3,"No games available")
 textDescription:setTint(unpack(color_bg))
 sidebarTextLayer:insertSprite(textDescription)
 
@@ -198,33 +197,33 @@ local _,top,_,bottom = sidebar_l:getBBox()
 sidebarTextLayer:setViewport(0,top,sw,bottom)
 
 -- IV. Art Layer
-local artLayer = cm.layer.new()
+local artLayer = cine.layer.new()
 artLayer:setZIndex(4)
 artLayer:setViewport(0,0,sw,sh*0.38)
 
 local artSprite
 
 -- V. Title
-local titleGradient = cm.sprite.new(0,sh*0.38,gSource)
+local titleGradient = cine.sprite.new(0,sh*0.38,gSource)
 titleGradient:setTint(0,0,0,128)
 titleGradient:center("left","bottom")
 titleGradient:setSca(sw,(sh*0.38)/10)
 titleGradient:setZIndex(3)
 artLayer:insertSprite(titleGradient)
-local bgGradient = cm.sprite.new(0,sh*0.38,gSource)
+local bgGradient = cine.sprite.new(0,sh*0.38,gSource)
 bgGradient:setTint(0,0,0,128)
 bgGradient:center("left","bottom")
 bgGradient:setSca(sw,(sh*0.38)/3)
 bgGradient:setZIndex(3)
 artLayer:insertSprite(bgGradient)
 
-local titleText = cm.sprite.new(sh*0.11,sh*0.38,sFont4,"No game available")
+local titleText = cine.sprite.new(sh*0.11,sh*0.38,sFont4,"No game available")
 titleText:center("left","bottom")
 titleText:setZIndex(4)
 artLayer:insertSprite(titleText)
 
-local sourceLogo = cm.sourceTileset.new("frontend/logos.png",128)
-local logo = cm.sprite.new(sw-sh*0.11,sh*0.38,sourceLogo,1)
+local sourceLogo = cine.sourceTileset.new("frontend/logos.png",128)
+local logo = cine.sprite.new(sw-sh*0.11,sh*0.38,sourceLogo,1)
 logo:setZIndex(5)
 logo:center("right","bottom")
 artLayer:insertSprite(logo)
@@ -262,11 +261,11 @@ local function updateSelector(currentIndex)
     elseif  platform == "No" then logo:setIndex(11)
     end
     local newImg = currentIndex
-    cm.thread.new(function()
-        cm.thread.wait(0.25)
+    cine.thread.new(function()
+        cine.thread.wait(0.25)
         if selector:getIndex() ~= newImg then return end
-        local sourceArt = love.filesystem.exists(myData[currentIndex].image) and cm.sourceImage.new(myData[currentIndex].image) or cm.sourceImage.new("NOIMG.png")
-        local sprite = cm.sprite.new(0,0)
+        local sourceArt = love.filesystem.exists(myData[currentIndex].image) and cine.sourceImage.new(myData[currentIndex].image) or cine.sourceImage.new("NOIMG.png")
+        local sprite = cine.sprite.new(0,0)
         if artSprite then artSprite:setZIndex(1) end
         sprite:setZIndex(2)
         sprite:setSource(sourceArt)
@@ -280,8 +279,8 @@ local function updateSelector(currentIndex)
         sprite:movePos(0,-delta,delta/40)
         sprite:setTint(255,255,255,0)
         artLayer:insertSprite(sprite)
-        cm.thread.yield()
-        cm.thread.waitThread(sprite:moveTint(0,0,0,255,0.5))
+        cine.thread.yield()
+        cine.thread.waitThread(sprite:moveTint(0,0,0,255,0.5))
         if artSprite then artLayer:removeSprite(artSprite) end
         artSprite = sprite
     end):run()
@@ -312,10 +311,10 @@ end
 
 
 local function buildSelector()
-    database = cm.serialize.load("game_database.lua")
+    database = cine.serialize.load("game_database.lua")
     print("Games in Database:"..#database.games)
     myData = database.games
-    myData = cm.data.filter(myData,filter)
+    myData = cine.data.filter(myData,filter)
     table.sort(myData,function(a,b) return tostring(a.name)<tostring(b.name) end)
     selector = menu.new(sFont)
     selector:setPos(sh*0.21,sh*0.62)
@@ -326,9 +325,9 @@ local function buildSelector()
             if #myData[i].platform == 0 then
                 local choice = selection("No file to run. Delete from Database?",{"Yes","No"})
                 if choice == 1 then
-                    local id = cm.data.find(database.games,{name={cm.data.equals,myData[i].name}})
+                    local id = cine.data.find(database.games,{name={cine.data.equals,myData[i].name}})
                     table.remove(database.games,id)
-                    cm.serialize.save(database,"game_database.lua")
+                    cine.serialize.save(database,"game_database.lua")
                     reset = true
                 end
             elseif #myData[i].platform == 1 then
@@ -345,8 +344,8 @@ local function buildSelector()
             end
             local choice = selection("Game options",options)
             if choice == 2 or choice == 3 then
-                local excluded = cm.serialize.load("excludedGames.lua") or {}
-                local id = cm.data.find(database.games,{name={cm.data.equals,myData[i].name}})
+                local excluded = cine.serialize.load("excludedGames.lua") or {}
+                local id = cine.data.find(database.games,{name={cine.data.equals,myData[i].name}})
                 for j=1, #myData[i].filename do
                     if choice == 3 then
                         OS.deleteRom(myData[i].platform[j],myData[i].filename[j])
@@ -355,17 +354,17 @@ local function buildSelector()
                     end
                 end
                 table.remove(database.games,id)
-                cm.serialize.save(database,"game_database.lua")
-                cm.serialize.save(excluded,"excludedGames.lua")
+                cine.serialize.save(database,"game_database.lua")
+                cine.serialize.save(excluded,"excludedGames.lua")
                 reset = true
             elseif choice==1 then
-                local id = cm.data.find(database.games,{name={cm.data.equals,myData[i].name}})
+                local id = cine.data.find(database.games,{name={cine.data.equals,myData[i].name}})
                 if myData[i].favourite then
                     database.games[id].favourite = nil
                 else
                     database.games[id].favourite = true
                 end
-                cm.serialize.save(database,"game_database.lua")
+                cine.serialize.save(database,"game_database.lua")
             end
 
         end)
@@ -387,7 +386,7 @@ function scene:onUpdate()
     if reset then
         local index = selector:getIndex()
         local active = selector:getActive()
-        cm.thread.wait(0.25)
+        cine.thread.wait(0.25)
         selector:delete()
         buildSelector()
         selector:setIndex(index)
@@ -402,7 +401,7 @@ function scene:onUpdate()
             sidebar_l_scroll()
             l_out = true
         end
-        cm.thread.wait(0.25)
+        cine.thread.wait(0.25)
     end
     if bRight:isPressed() then
         if l_out then sidebar_l_scroll() l_out = false end
@@ -413,7 +412,7 @@ function scene:onUpdate()
             sidebar_r_scroll()
             r_out = true
         end
-        cm.thread.wait(0.25)
+        cine.thread.wait(0.25)
     end
     if bStart:isPressed() then
         local choice = selection("System Menu",{"Update Database","Configure Keys","Reboot","Shutdown","Exit"})
@@ -422,12 +421,12 @@ function scene:onUpdate()
         if choice == 3 then OS.reboot() end
         if choice == 4 then OS.shutdown() end
         if choice == 5 then love.event.quit() end
-        cm.thread.wait(0.5)
+        cine.thread.wait(0.5)
     end
 end
 
 function scene:onStop()
-    cm.layer.clearAll()
+    cine.layer.clearAll()
     --define what is going to happen when your scene stops
 end
 

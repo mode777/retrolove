@@ -1,4 +1,3 @@
-local cm = require("engine")
 local OS = {}
 local ctr = 0
 
@@ -50,9 +49,9 @@ function OS.runEmulator(Platform, Rom)
         para = para:gsub("%%romPath%%","\""..cfg[Platform].romPath)
         para = para:gsub("%%file%%",Rom.."\"")
         para = para:gsub("%%fileNoExt%%",Rom:sub(1,-5))
-        cm.thread.wait(1)
+        cine.thread.wait(1)
         OS.runExe(cfg[Platform].emuPath, cfg[Platform].fileName, para)
-        cm.thread.wait(0.5)
+        cine.thread.wait(0.5)
     else
         print("No emulator configured for "..Platform)
     end

@@ -1,7 +1,6 @@
-local cm = require(ENGINE_PATH)
-local input = cm.input
+local input = cine.input
 local scene = {}
-local layer = cm.layer.new()
+local layer = cine.layer.new()
 local cfg = require("frontend/config")
 local sw, sh = love.window.getDimensions()
 local font = cfg.font[2]
@@ -10,19 +9,19 @@ local selection = require("frontend/selectMenu")
 
 local function waitInput()
     while not input.getCurrentInput() do
-        cm.thread.yield()
+        cine.thread.yield()
     end
     return input.getCurrentInput()
 end
 
 function scene:onLoad()
     love.graphics.setBackgroundColor(unpack(cfg.bgColor))
-    local controller = cm.sprite.new(sw/2, sh/2+sh*0.1, cm.sourceImage.new("frontend/360_controller.png"))
+    local controller = cine.sprite.new(sw/2, sh/2+sh*0.1, cine.sourceImage.new("frontend/360_controller.png"))
     controller:center()
     controller:setTint(255,255,255,100)
     controller:setSca(sh*0.6/controller:getSource():getImage():getHeight())
-    local status = cm.sprite.new(sh*0.1, sh*0.1, font, "Input configuration \r\n(press button to continue)")
-    local status2 = cm.sprite.new(sh*0.1, sh*0.2, smFont, "")
+    local status = cine.sprite.new(sh*0.1, sh*0.1, font, "Input configuration \r\n(press button to continue)")
+    local status2 = cine.sprite.new(sh*0.1, sh*0.2, smFont, "")
     layer:insertSprite(controller)
     layer:insertSprite(status)
     layer:insertSprite(status2)
@@ -30,7 +29,7 @@ function scene:onLoad()
     status2:setTint(unpack(cfg.color2))
     local choice = 2
     while choice == 2 do
-        cm.input.setMappingTable({})
+        cine.input.setMappingTable({})
         status2:setIndex("")
         status:setIndex("Input configuration \r\n(press button to continue)")
         waitInput()
@@ -39,7 +38,7 @@ function scene:onLoad()
         for i=1, #inputs do
             local button = input.newVirtualInput(inputs[i])
             status:setIndex("Press input for \""..inputs[i].."\"...")
-            cm.thread.wait(0.25)
+            cine.thread.wait(0.25)
             button:map(waitInput())
             local data = {input.getCurrentInput() }
             if data[1] == "keyboard" then data = string.format("Keyboard '%s'-key",data[2]) end
@@ -50,7 +49,7 @@ function scene:onLoad()
         choice = selection("Is this correct?",{"Yes","No"})
     end
     self:stop()
-    cm.serialize.save(input.getMappingTable(),"buttons.lua")
+    cine.serialize.save(input.getMappingTable(),"buttons.lua")
     --initialize your scene here
 end
 
@@ -59,7 +58,7 @@ function scene:onUpdate()
 end
 
 function scene:onStop()
-    cm.layer.remove(layer)
+    cine.layer.remove(layer)
     --define what is going to happen when your scene stops
 end
 

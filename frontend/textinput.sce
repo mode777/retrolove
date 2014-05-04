@@ -1,35 +1,34 @@
-local cm = require(ENGINE_PATH)
 local input = require("frontend/input")
 local scene = {}
 
 local currentIndex = {1,1}
 local previousIndex = {}
 local grid
-local cfg = cm.serialize.load("frontend/config.lua")
+local cfg = cine.serialize.load("frontend/config.lua")
 local sw,sh = love.window.getDimensions()
-local font = cm.sourceFont.new("frontend/Roboto-Bold.ttf",cfg.fontSize[3]*(sh/100))
-local layer = cm.layer.new()
-local text = cm.sprite.new(50,400,font,"")
+local font = cine.sourceFont.new("frontend/Roboto-Bold.ttf",cfg.fontSize[3]*(sh/100))
+local layer = cine.layer.new()
+local text = cine.sprite.new(50,400,font,"")
 local keyboardLayer
 
 local targetString = ""
 
 local function createTextGrid(data,x,y)
-    if keyboardLayer then cm.layer.remove(keyboardLayer) end
+    if keyboardLayer then cine.layer.remove(keyboardLayer) end
     if grid then grid:clear() end
-    keyboardLayer = cm.layer.new()
-    grid = cm.grid.new(x,y)
-    local sbox = cm.sourceRectangle.new(0.5*(sh/100),cfg.color1)
+    keyboardLayer = cine.layer.new()
+    grid = cine.grid.new(x,y)
+    local sbox = cine.sourceRectangle.new(0.5*(sh/100),cfg.color1)
     local size= font:getLineHeight()
 
     for i=1, data:len()  do
         local content = string.char(data:byte(i))
         local x,y = grid:getCoordinates(i)
-        local sprite = cm.sprite.new(x*size,y*size,font,content)
+        local sprite = cine.sprite.new(x*size,y*size,font,content)
         sprite:center()
         sprite:movePiv(-1*(sh/100),0.5*(sh/100))
         sprite:setTint(unpack(cfg.color1))
-        local box = cm.sprite.new(x*size,y*size, sbox, {size,size})
+        local box = cine.sprite.new(x*size,y*size, sbox, {size,size})
         --box:setTint(unpack(cfg.color1))
         box:center()
         keyboardLayer:insertSprite(box)
@@ -48,7 +47,7 @@ local charSets =
 function scene:onLoad()
     layer:insertSprite(text)
     createTextGrid(charSets[1],9,3)
-    cm.textinput.setTarget("")
+    cine.textinput.setTarget("")
 
     --createTextGrid(charSets[2],9,3)
     --createTextGrid("1234567890!@#$/^&*()-'\":;,?",9,3)
@@ -59,7 +58,7 @@ local setIndex = 1
 local delay = 0.20
 function scene:onUpdate()
     if input:getCurrentInput() then print(input:getCurrentInput()) end
-    text:setIndex(cm.textinput.getTarget(true))
+    text:setIndex(cine.textinput.getTarget(true))
     if (currentIndex[1] ~= previousIndex[1]) or (currentIndex[2] ~= previousIndex[2]) then
         local x,y
         local text,box
@@ -80,25 +79,25 @@ function scene:onUpdate()
         previousIndex[1],previousIndex[2] = currentIndex[1],currentIndex[2]
     end
     if input.down() then
-        currentIndex[2] = currentIndex[2]+1 cm.thread.wait(delay)
+        currentIndex[2] = currentIndex[2]+1 cine.thread.wait(delay)
         while not grid:getCell(unpack(currentIndex)) do
             currentIndex[2] = currentIndex[2]+1
         end
     end
     if input.up() then
-        currentIndex[2] = currentIndex[2]-1 cm.thread.wait(delay)
+        currentIndex[2] = currentIndex[2]-1 cine.thread.wait(delay)
         while not grid:getCell(unpack(currentIndex)) do
             currentIndex[2] = currentIndex[2]-1
         end
     end
     if input.right() then
-        currentIndex[1] = currentIndex[1]+1 cm.thread.wait(delay)
+        currentIndex[1] = currentIndex[1]+1 cine.thread.wait(delay)
         while not grid:getCell(unpack(currentIndex)) do
             currentIndex[1] = currentIndex[1]+1
         end
     end
     if input.left() then
-        currentIndex[1] = currentIndex[1]-1 cm.thread.wait(delay)
+        currentIndex[1] = currentIndex[1]-1 cine.thread.wait(delay)
         while not grid:getCell(unpack(currentIndex)) do
             currentIndex[1] = currentIndex[1]-1
         end
@@ -109,31 +108,31 @@ function scene:onUpdate()
         createTextGrid(charSets[setIndex],9,3)
         currentIndex = {1,1}
         previousIndex = {}
-        cm.thread.wait(delay)
+        cine.thread.wait(delay)
     end
     if input.select() then
-        cm.textinput.insert(grid:getCell(unpack(currentIndex))[1]:getIndex())
-        cm.thread.wait(delay)
+        cine.textinput.insert(grid:getCell(unpack(currentIndex))[1]:getIndex())
+        cine.thread.wait(delay)
     end
     if input.cancel() then
         print("test")
-        cm.textinput.delete()
-        cm.thread.wait(delay)
+        cine.textinput.delete()
+        cine.thread.wait(delay)
     end
     if input.previous() then
-        cm.textinput.moveIndex("left")
-        cm.thread.wait(delay)
+        cine.textinput.moveIndex("left")
+        cine.thread.wait(delay)
     end
     if input.next() then
-        cm.textinput.moveIndex("right")
-        cm.thread.wait(delay)
+        cine.textinput.moveIndex("right")
+        cine.thread.wait(delay)
     end
     if input.space() then
-        cm.textinput.insert(" ")
-        cm.thread.wait(delay)
+        cine.textinput.insert(" ")
+        cine.thread.wait(delay)
     end
-    local char = cm.getLoveEvent("textinput")
-    if char then cm.textinput.insert(char) end
+    local char = cine.getLoveEvent("textinput")
+    if char then cine.textinput.insert(char) end
     --update your scene here.
 end
 

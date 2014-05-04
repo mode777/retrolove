@@ -1,14 +1,13 @@
-local cm = require(ENGINE_PATH)
 local scene = {}
 --input.loadMapping("buttons.lua")
-local buttonUp = cm.input.newVirtualInput("up")
-local buttonDown = cm.input.newVirtualInput("down")
-local buttonLeft = cm.input.newVirtualInput("left")
-local buttonRight = cm.input.newVirtualInput("right")
+local buttonUp = cine.input.newVirtualInput("up")
+local buttonDown = cine.input.newVirtualInput("down")
+local buttonLeft = cine.input.newVirtualInput("left")
+local buttonRight = cine.input.newVirtualInput("right")
 
 local function waitInput()
     while not input.getCurrentInput() do
-        cm.thread.yield()
+        cine.thread.yield()
     end
     return input.getCurrentInput()
 end

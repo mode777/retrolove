@@ -1,4 +1,3 @@
-local cm = require(ENGINE_PATH)
 local OS = require("frontend/OS")
 local selection = require("frontend/selectMenu")
 local key = "bc51d144ab1bf6e34b67686425f524c9b2582c63"
@@ -12,35 +11,35 @@ local json = require("frontend/json")
 
 local cfg = require("frontend/config")
 local sw,sh = love.window.getDimensions()
-local layer = cm.layer.new()
+local layer = cine.layer.new()
 local color_bg, color1, color2 = cfg.bgColor, cfg.color1, cfg.color2
 love.graphics.setBackgroundColor(unpack(color_bg))
 
 local sFont = cfg.font[2]
 local sFont2 = cfg.font[3]
 local sFont3 = cfg.font[1]
-local status = cm.sprite.new(sh*0.1,sh*0.1,sFont,"")
+local status = cine.sprite.new(sh*0.1,sh*0.1,sFont,"")
 status:setTint(unpack(color1))
-local status2 = cm.sprite.new(sh*0.20,sh*0.20,sFont3,"")
+local status2 = cine.sprite.new(sh*0.20,sh*0.20,sFont3,"")
 local r,g,b = unpack(color2)
 status2:setTint(r,g,b,128)
 status2:center()
 layer:insertSprite(status)
-local box = cm.sourceRectangle.new()
+local box = cine.sourceRectangle.new()
 local r,g,b = unpack(color1)
-local bar_under = cm.sprite.new(sh*0.2,sh-sh*0.2,box,{sw-sh*0.4,20})
+local bar_under = cine.sprite.new(sh*0.2,sh-sh*0.2,box,{sw-sh*0.4,20})
 bar_under:setTint(r,g,b,60)
-local bar = cm.sprite.new(sh*0.2,sh-sh*0.2,box,{sw-sh*0.4,20})
+local bar = cine.sprite.new(sh*0.2,sh-sh*0.2,box,{sw-sh*0.4,20})
 bar:setTint(r,g,b)
 
 layer:insertSprite(bar_under)
 layer:insertSprite(bar)
 
 
-local romNames = cm.serialize.load("frontend/romnames.lua") or {}
+local romNames = cine.serialize.load("frontend/romnames.lua") or {}
 
-local database = cm.serialize.load("game_database.lua") or {games={},genres={},developers={},years={},platforms={}}
-local cfg = cm.serialize.load("emuConf.lua") or error("No emulation configuration found")
+local database = cine.serialize.load("game_database.lua") or {games={},genres={},developers={},years={},platforms={}}
+local cfg = cine.serialize.load("emuConf.lua") or error("No emulation configuration found")
 local searches ={}
 local queries = {}
 local downloads = {}
@@ -62,19 +61,19 @@ local function clearFilename(name)
 end
 
 local function loadScreen(func)
-    local layer = cm.layer.new()
-    local sprite = cm.sprite.new(sw/2,sh/2,cm.sourceImage.new("frontend/loading.png"))
+    local layer = cine.layer.new()
+    local sprite = cine.sprite.new(sw/2,sh/2,cine.sourceImage.new("frontend/loading.png"))
     sprite:setTint(unpack(color2))
     sprite:center()
     layer:insertSprite(sprite)
     while not func() do
-        cm.thread.waitThread(sprite:moveRot(math.rad(-90),0.125))
+        cine.thread.waitThread(sprite:moveRot(math.rad(-90),0.125))
     end
-    cm.layer.remove(layer)
+    cine.layer.remove(layer)
 end
 
 local function queryDatabase(ressourceType,ressourceID,fields_string)
-    cm.thread.new(function()
+    cine.thread.new(function()
         local queryString = "http://www.giantbomb.com/api/"..ressourceType.."/"..ressourceID.."/?api_key="..key.."&format=json"
         if fields_string then queryString = queryString.."&field_list="..fields_string end
         R_IN:push(queryString)
@@ -83,7 +82,7 @@ local function queryDatabase(ressourceType,ressourceID,fields_string)
         print("Getting Information for "..ressourceType.." ID:"..ressourceID)
         local wait = true
         while wait do
-            cm.thread.yield()
+            cine.thread.yield()
             result = R_OUT:peek()
             if result then
                 if result[1] == queryString then R_OUT:pop() wait=false end
@@ -97,14 +96,14 @@ local function queryDatabase(ressourceType,ressourceID,fields_string)
 end
 
 local function download(url,filename)
-    cm.thread.new(function()
+    cine.thread.new(function()
         W_IN:push({url,filename})
         if webRequest:getError() then error(webRequest:getError()) end
         local result
         print("Downloading: "..url)
         local wait = true
         while wait do
-            cm.thread.yield()
+            cine.thread.yield()
             result = W_OUT:peek()
             if result == filename then W_OUT:pop() wait = false end
         end
@@ -114,7 +113,7 @@ local function download(url,filename)
 end
 
 local function searchGame(name,platform)
-    cm.thread.new(function()
+    cine.thread.new(function()
         local filename = name
         name = clearFilename(name)
         local webname = name:gsub("%s","%%20") --replace space with %20
@@ -125,7 +124,7 @@ local function searchGame(name,platform)
         print("Searching for game: "..name)
         local wait = true
         while wait do
-            cm.thread.yield()
+            cine.thread.yield()
             result = R_OUT:peek()
             if result then
                 if result[1] == queryString then R_OUT:pop() wait=false end
@@ -170,7 +169,7 @@ local scene = {}
 function scene:onLoad()
     local function addGame(name,platform,disambiguate)
         --check Database
-        local existing = cm.data.filter( database.games,{filename={cm.data.equals,name}} )
+        local existing = cine.data.filter( database.games,{filename={cine.data.equals,name}} )
         --print(#existing)
         if #existing > 0 then
             print(name.." for "..platform.." is already in database")
@@ -193,7 +192,7 @@ function scene:onLoad()
         else
             --Filter results
             local screenName = clearFilename(name)
-            local filteredByExactName = cm.data.filter(searches[name],{name={cm.data.equals,screenName}})
+            local filteredByExactName = cine.data.filter(searches[name],{name={cine.data.equals,screenName}})
             --Choose match
             if #filteredByExactName == 1 or #searches[name] == 1 then
                 foundGame = filteredByExactName[1]
@@ -220,7 +219,7 @@ function scene:onLoad()
         searches[name] = nil
 
         --check if game exists already for another platform
-        local existing = cm.data.filter( database.games,{name={cm.data.equals,foundGame.name}} )
+        local existing = cine.data.filter( database.games,{name={cine.data.equals,foundGame.name}} )
         if #existing > 0 then
             table.insert(existing[1].platform,platform)
             table.insert(existing[1].filename,name)
@@ -317,7 +316,7 @@ function scene:onLoad()
     --get all filenames
     status:setIndex("Collecting filenames...")
     local filenames = {}
-    local excludedNames = cm.serialize.load("excludedGames.lua") or {}
+    local excludedNames = cine.serialize.load("excludedGames.lua") or {}
     for platformName, platform in pairs(cfg) do
         local pc = 0
         if platform.romPath then
@@ -352,13 +351,13 @@ function scene:onLoad()
                     table.remove(database.games[i].filename, j)
                     break
                 end
-                if not filenames[platform] then cm.thread.wait(5) error("No configuration for platform \""..platform.."\" found. (But games in database)") end
+                if not filenames[platform] then cine.thread.wait(5) error("No configuration for platform \""..platform.."\" found. (But games in database)") end
                 if filenames[platform][filename] then
                     filenames[platform][filename] = nil --file already in databse, remove from new files
                 else -- file not present anymore remove
                     update = true
                     status:setIndex("Removing "..filename)
-                    cm.thread.wait(0.1)
+                    cine.thread.wait(0.1)
                     table.remove(database.games[i].platform, j)
                     table.remove(database.games[i].filename, j)
                 end
@@ -417,9 +416,9 @@ function scene:onLoad()
     end
     if update then
         --make backup
-        local backup = cm.serialize.load("game_database.lua")
-        cm.serialize.save(backup,"game_database.bak")
-        cm.serialize.save(database,"game_database.lua")
+        local backup = cine.serialize.load("game_database.lua")
+        cine.serialize.save(backup,"game_database.bak")
+        cine.serialize.save(database,"game_database.lua")
     end
     status:setIndex("Finished building rom database")
     self:stop()
@@ -430,8 +429,7 @@ function scene:onUpdate()
 end
 
 function scene:onStop()
-    print(stop)
-    cm.layer.clearAll()
+    cine.layer.clearAll()
 end
 
 return scene

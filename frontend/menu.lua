@@ -1,5 +1,4 @@
-local cm = require("engine")
-local bUp, bDown, bX, bA, bBack, bRB, bLB = cm.input.getVirtualInput("Up") ,cm.input.getVirtualInput("Down"),cm.input.getVirtualInput("X"),cm.input.getVirtualInput("A"),cm.input.getVirtualInput("Back"),cm.input.getVirtualInput("RB"),cm.input.getVirtualInput("LB")
+local bUp, bDown, bX, bA, bBack, bRB, bLB = cine.input.getVirtualInput("Up") ,cine.input.getVirtualInput("Down"),cine.input.getVirtualInput("X"),cine.input.getVirtualInput("A"),cine.input.getVirtualInput("Back"),cine.input.getVirtualInput("RB"),cine.input.getVirtualInput("LB")
 local menu = {}
 
 function menu.new(Font,Size, Layer)
@@ -40,7 +39,7 @@ function menu.new(Font,Size, Layer)
     end
 
     function i:setFont(name,size)
-        if type(name) == "string" then font = cm.sourceFont.new(name,size)
+        if type(name) == "string" then font = cine.sourceFont.new(name,size)
         else font = name
         end
     end
@@ -61,7 +60,7 @@ function menu.new(Font,Size, Layer)
     end
 
     function i:delete()
-        if layer then cm.layer.remove(layer) end
+        if layer then cine.layer.remove(layer) end
     end
 
     function i:getLayer()
@@ -73,7 +72,7 @@ function menu.new(Font,Size, Layer)
     end
 
     function i:addItem(desc,callback,callback2)
-        local sprite = cm.sprite.new(0,#items*font:getLineHeight(),font,desc)
+        local sprite = cine.sprite.new(0,#items*font:getLineHeight(),font,desc)
         sprite:setTint(color[1],color[2],color[3],128)
         sprite:center("left","middle")
         sprite.execute = callback
@@ -128,10 +127,10 @@ function menu.new(Font,Size, Layer)
             if bA:isReleased() then items[currentI]:execute() end
             if bBack:isReleased() then if items[currentI].options then items[currentI]:options() end end
             if not bUp:isDown() and not bDown:isDown() then speed = 1 end
-            if bDown:isDown() then i:setIndex(currentI+1) cm.thread.wait(delay/speed) end
-            if bLB:isDown() then i:setIndex(findNextLetter()) cm.thread.wait(delay) end
-            if bUp:isDown() then i:setIndex(currentI-1) cm.thread.wait(delay/speed) end
-            if bRB:isDown() then i:setIndex(findPreviousLetter()) cm.thread.wait(delay) end
+            if bDown:isDown() then i:setIndex(currentI+1) cine.thread.wait(delay/speed) end
+            if bLB:isDown() then i:setIndex(findNextLetter()) cine.thread.wait(delay) end
+            if bUp:isDown() then i:setIndex(currentI-1) cine.thread.wait(delay/speed) end
+            if bRB:isDown() then i:setIndex(findPreviousLetter()) cine.thread.wait(delay) end
             speed = speed+0.33
             if currentI ~= prevI then
                 sfx:play()
@@ -150,8 +149,8 @@ function menu.new(Font,Size, Layer)
     end
 
     if Font then i:setFont(Font,Size) end
-    layer = Layer or cm.layer.new()
-    cam = cm.camera.new()
+    layer = Layer or cine.layer.new()
+    cam = cine.camera.new()
     cam:setTweenStyle("easeout")
     layer:setCamera(cam)
 
