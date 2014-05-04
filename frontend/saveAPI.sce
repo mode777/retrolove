@@ -40,7 +40,7 @@ local function markdown(filename)
         if #para > 0 then
             add("\r\n**Arguments**\r\n\r\n")
             for i,v in ipairs(para) do
-                add(string.format("`%s` %s: %s\r\n",v[1],v[2],v[3] or ""))
+                add(string.format("`%s` %s: %s\r\n\r\n",v[1],v[2],v[3] or ""))
             end
         end
         if #ret > 0 then
