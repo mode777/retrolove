@@ -103,19 +103,22 @@ local function createDocumentation(doclet)
             print("Documentation found for module "..name)
             local document = doclet("cine."..name)
             local doc = module._DOC
+            local constructor
             document:newSection("Functions")
             for func,content in pairs(doc) do
                 if func ~= "new" then
                     local desc, para, ret = content[1], content[2] or {}, content[3] or {}
                     local usage = formatUsage("%scine."..name.."."..func.."(%s)",para,ret)
                     document:newBlock("cine."..name.."."..func,desc,usage,para,ret)
+                else
+                    constructor = func
                 end
             end
-            if doc.new then
-                local content = doc.new
+            if constructor then
+                local content = doc[constructor]
                 document:newSection("Constructor")
-                if doc.new.INHERIT then
-                    document:newParagraph("This object inherits from %"..doc.new.INHERIT.."%. All of it's parents methods can be used unless definied otherweise on this page.")
+                if doc[constructor].INHERIT then
+                    document:newParagraph("This object inherits from %"..doc[constructor].INHERIT.."%. All of it's parents methods can be used unless definied otherweise on this page.")
                 end
                 local desc, para, ret = content[1], content[2] or {}, content[3] or {}
                 local usage = formatUsage("%scine."..name..".new(%s)",para,ret)
